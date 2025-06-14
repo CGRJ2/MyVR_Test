@@ -7,13 +7,24 @@ public class IceCreamCan : MonoBehaviour
     [SerializeField] IceCreamTasteType taste;
     int remainingAmount = 10;
 
-    private void OnCollisionStay(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(collision.gameObject.name);
+        if (other.CompareTag("ScoopHead"))
+        {
+            ScoopController scoop = other.GetComponentInParent<ScoopController>();
+            scoop.SetIceCreamCan(this);
+        }
+        
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("ScoopHead"))
+        {
+            ScoopController scoop = other.GetComponentInParent<ScoopController>();
+            scoop.SetIceCreamCan(null);
+        }
+            
     }
 
-    private void OnCollisionExit(Collision collision)
-    {
-        Debug.Log("out");
-    }
+
 }
