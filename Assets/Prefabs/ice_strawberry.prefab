@@ -500,3 +500,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   upperSocket: {fileID: 2068777510561759395}
+  taste: 0
+  materials:
+  - {fileID: 2100000, guid: 700569cd9e9627e4ea87b3ae2020d797, type: 2}
+  - {fileID: 2100000, guid: 23dac086924d10e45899217d5de75966, type: 2}
+  - {fileID: 2100000, guid: 2399ebd32314d7d4383f03507cb31821, type: 2}

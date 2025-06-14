@@ -11,7 +11,7 @@ public class IceSocketController : XRSocketInteractor
         // 소켓에 붙으면 아이스크림인지 판단 먼저
         // 위에 붙은 놈이니까. 붙은 놈에다가 uppersocket 활성화해줌
         IXRSelectInteractable attachedObj = args.interactableObject;
-        attachedObj.transform.GetComponent<IceLump>().upperSocket.SetActive(true);
+        attachedObj.transform.GetComponent<IceCream>().upperSocket.SetActive(true);
 
         //Debug.Log(args.interactableObject.transform.gameObject.name);
     }
@@ -20,6 +20,6 @@ public class IceSocketController : XRSocketInteractor
     {
         base.OnSelectExited(args);
         IXRSelectInteractable attachedObj = args.interactableObject;
-        attachedObj.transform.GetComponent<IceLump>().upperSocket.SetActive(false);
+        attachedObj.transform.GetComponent<IceCream>().upperSocket.SetActive(false);
     }
 }

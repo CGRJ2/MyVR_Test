@@ -7,6 +7,8 @@ public class IceCreamCan : MonoBehaviour
     [SerializeField] IceCreamTasteType taste;
     int remainingAmount = 10;
 
+   
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("ScoopHead"))
@@ -23,8 +25,10 @@ public class IceCreamCan : MonoBehaviour
             ScoopController scoop = other.GetComponentInParent<ScoopController>();
             scoop.SetIceCreamCan(null);
         }
-            
     }
 
-
+    public IceCreamTasteType GetTasteType()
+    {
+        return taste;
+    }
 }

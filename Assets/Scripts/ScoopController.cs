@@ -19,6 +19,7 @@ public class ScoopController : XRGrabInteractable
         if (touchedCan != null)
         {
             nowOnScoopIce = Instantiate(iceCreamPrefab, iceSpawnPoint);
+            nowOnScoopIce.GetComponent<IceCream>().SetTaste(touchedCan.GetTasteType());
             nowOnScoopIce.GetComponent<XRGrabInteractable>().enabled = false;
             nowOnScoopIce.GetComponent<Rigidbody>().isKinematic = true;
         }
