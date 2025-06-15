@@ -235,7 +235,7 @@ GameObject:
   - component: {fileID: 6227744227465550840}
   - component: {fileID: -7892733553083002537}
   m_Layer: 0
-  m_Name: ice_strawberry
+  m_Name: IceCream
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -3,7 +3,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class ScoopController : XRGrabInteractable
 {
-    [SerializeField] IceCreamCan touchedCan;
+    [SerializeField] IceCreamInBucket touchedCan;
     [SerializeField] Collider ScoopHeadCollider;
 
     [SerializeField] GameObject iceCreamPrefab;
@@ -39,7 +39,7 @@ public class ScoopController : XRGrabInteractable
         }
     }
 
-    public void SetIceCreamCan(IceCreamCan can)
+    public void SetIceCreamCan(IceCreamInBucket can)
     {
         touchedCan = can;
     }

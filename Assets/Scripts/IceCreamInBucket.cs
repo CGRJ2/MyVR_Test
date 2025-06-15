@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IceCreamCan : MonoBehaviour
+public class IceCreamInBucket : MonoBehaviour
 {
     [SerializeField] IceCreamTasteType taste;
     int remainingAmount = 10;
