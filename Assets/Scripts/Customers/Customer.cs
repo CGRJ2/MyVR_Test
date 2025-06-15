@@ -1,19 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Customer : MonoBehaviour
 {
     Stack<IceCreamTasteType> orderStack;
     float timeLimit;
     float currentTime;
+    
 
     Vector3 targetPoint;
+    NavMeshAgent agent;
 
 
     private void Start()
     {
         // 생성 시, 아이스크림 판매 대로 이동
-        
+        agent = GetComponent<NavMeshAgent>();
+        agent.SetDestination(targetPoint);
 
         // 도착하면 UI 반영(UIManager 호출)
     }
@@ -44,7 +48,6 @@ public class Customer : MonoBehaviour
     {
         targetPoint = target;
         // 임시
-        transform.position = targetPoint;
     }
 
     // 손님 타입 (온화, 보통, 심술)

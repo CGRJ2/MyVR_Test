@@ -9,6 +9,7 @@ public class CustomerManager : Singleton<CustomerManager>
     [SerializeField] float lineDistance;
     [SerializeField] GameObject customerPrefab;
     [SerializeField] Transform defaultTarget;
+    [SerializeField] Transform npcSpawnPoint;
     Stack<Customer> customers = new Stack<Customer>();
 
     public void Init()
@@ -30,7 +31,7 @@ public class CustomerManager : Singleton<CustomerManager>
     public void SpawnCustomer()
     {
         // 손님 프리펩 생성
-        Customer customer = Instantiate(customerPrefab).GetComponent<Customer>(); // TODO: 스폰 위치 커스텀 하기
+        Customer customer = Instantiate(customerPrefab, npcSpawnPoint.position, Quaternion.identity).GetComponent<Customer>(); // TODO: 스폰 위치 커스텀 하기
 
         // 아이스크림 메뉴 설정
         customer.SetOrder(RandomOrderStackGenerate());
