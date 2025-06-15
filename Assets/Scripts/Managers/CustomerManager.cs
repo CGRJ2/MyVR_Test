@@ -1,26 +1,45 @@
-using System.Collections;
-using System.Collections.Generic;
 using DesignPattern;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CustomerManager : Singleton<CustomerManager>
 {
     [SerializeField] int maxIceCreamLayer;
+    [SerializeField] int maxCustomerCounts;
+    [SerializeField] float lineDistance;
     [SerializeField] GameObject customerPrefab;
+    [SerializeField] Transform defaultTarget;
+    Stack<Customer> customers = new Stack<Customer>();
 
     public void Init()
     {
         base.SingletonInit();
     }
 
-    public void Start()
+    public void Update()
     {
-        RandomOrderStackGenerate();
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            if (customers.Count < maxCustomerCounts)
+            {
+                SpawnCustomer();
+            }
+        }
     }
 
     public void SpawnCustomer()
     {
-        Instantiate(customerPrefab);
+        // 손님 프리펩 생성
+        Customer customer = Instantiate(customerPrefab).GetComponent<Customer>(); // TODO: 스폰 위치 커스텀 하기
+
+        // 아이스크림 메뉴 설정
+        customer.SetOrder(RandomOrderStackGenerate());
+
+        // 줄 서는 위치 설정
+        customer.SetTargetPoint(GetTargetPos());
+
+        // 손님 줄에 추가
+        customers.Push(customer);
     }
 
     public Stack<IceCreamTasteType> RandomOrderStackGenerate()
@@ -47,9 +66,17 @@ public class CustomerManager : Singleton<CustomerManager>
         return orderStack;
     }
 
-    // 현재 고객 상태를 UI에 반영 (아이스크림 주문 정보, 남은 시간, 표정)
-    public void ApplyUi()
+    public Vector3 GetTargetPos()
     {
-
+        if (customers.Count <= 0)
+        {
+            return defaultTarget.position;
+        }
+        else
+        {
+            return defaultTarget.position + Vector3.forward * lineDistance * customers.Count;
+        }
     }
+
+    
 }

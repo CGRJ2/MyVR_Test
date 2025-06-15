@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    CustomerManager customerManager;
+    [SerializeField] CustomerManager customerManager;
 
     // 게임 상태 : 장사 대기 > 장사 시작 > 장사 종료 > 정산 > 장사 대기 ... ////// +일시정지
     private void Awake() => Init();
