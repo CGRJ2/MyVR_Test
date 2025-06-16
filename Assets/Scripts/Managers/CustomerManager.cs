@@ -1,4 +1,5 @@
 using DesignPattern;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +11,9 @@ public class CustomerManager : Singleton<CustomerManager>
     [SerializeField] GameObject customerPrefab;
     [SerializeField] Transform defaultTarget;
     [SerializeField] Transform npcSpawnPoint;
-    Stack<Customer> customers = new Stack<Customer>();
+    Queue<Customer> customers = new Queue<Customer>();
+
+    /*[SerializeField]*/ public Customer nowCustomer;
 
     public void Init()
     {
@@ -36,22 +39,31 @@ public class CustomerManager : Singleton<CustomerManager>
         // 아이스크림 메뉴 설정
         customer.SetOrder(RandomOrderStackGenerate());
 
-        // 줄 서는 위치 설정
-        customer.SetTargetPoint(GetTargetPos());
+        // 손님 큐에 추가
+        customers.Enqueue(customer);
 
-        // 손님 줄에 추가
-        customers.Push(customer);
+        // 큐 순서에 맞춰 줄 서는 위치 설정
+        customer.SetTargetPoint(GetTargetPos(customer));
+    }
+
+    public void RemoveFirstCustomer()
+    {
+        // 손님 큐에서 제거
+        customers.Dequeue();
+
+        // 줄 업데이트 (한칸씩 당기기)
+        UpdateCustomerLine();
     }
 
     public Stack<IceCreamTasteType> RandomOrderStackGenerate()
     {
-        int tasteCount = System.Enum.GetValues(typeof(IceCreamTasteType)).Length;
-        int r = Random.Range(1, maxIceCreamLayer + 1);
+        int tasteCount = Enum.GetValues(typeof(IceCreamTasteType)).Length;
+        int r = UnityEngine.Random.Range(1, maxIceCreamLayer + 1);
         Stack<IceCreamTasteType> orderStack = new Stack<IceCreamTasteType>();
 
         for (int i = 0; i < r; i++)
         {
-            int randomTaste = Random.Range(0, tasteCount);
+            int randomTaste = UnityEngine.Random.Range(0, tasteCount);
             orderStack.Push((IceCreamTasteType)randomTaste);
         }
 
@@ -67,17 +79,39 @@ public class CustomerManager : Singleton<CustomerManager>
         return orderStack;
     }
 
-    public Vector3 GetTargetPos()
+    public Vector3 GetTargetPos(Customer customer)
     {
-        if (customers.Count <= 0)
+        int index = Array.IndexOf(customers.ToArray(), customer);
+
+        if (index == 0)
         {
             return defaultTarget.position;
         }
         else
         {
-            return defaultTarget.position + Vector3.forward * lineDistance * customers.Count;
+            return defaultTarget.position + Vector3.forward * lineDistance * index;
         }
     }
 
-    
+    public void UpdateCustomerLine()
+    {
+        foreach(Customer customer in customers)
+        {
+            customer.SetTargetPoint(GetTargetPos(customer));
+            customer.agent.SetDestination(GetTargetPos(customer));
+        }
+    }
+
+    // 현재 상호작용 중인 손님 (맨 첫번째 줄의 손님)
+    public void SetNowCustomer(Customer customer)
+    {
+        nowCustomer = customer;
+
+        // UI 업데이트, 활성화
+    }
+
+    public Vector3 GetFirstPos()
+    {
+        return defaultTarget.position;
+    }
 }
