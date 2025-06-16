@@ -11,7 +11,7 @@ namespace DesignPattern
             get => _value;
             set
             {
-                if (_value.Equals(value)) return;
+                if (object.Equals(_value, value)) return;
                 _value = value;
                 Notify();
             }

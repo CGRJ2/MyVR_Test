@@ -13,11 +13,16 @@ public class CustomerManager : Singleton<CustomerManager>
     [SerializeField] Transform npcSpawnPoint;
     Queue<Customer> customers = new Queue<Customer>();
 
-    /*[SerializeField]*/ public Customer nowCustomer;
+    public ObservableProperty<Stack<IceCreamTasteType>> NowOrder { get; private set; } = new();
 
     public void Init()
     {
         base.SingletonInit();
+    }
+
+    private void OnDestroy()
+    {
+        NowOrder.UnsbscribeAll();
     }
 
     public void Update()
@@ -48,6 +53,9 @@ public class CustomerManager : Singleton<CustomerManager>
 
     public void RemoveFirstCustomer()
     {
+        // 현재 손님 값 초기화
+        NowOrder.Value = null;
+
         // 손님 큐에서 제거
         customers.Dequeue();
 
@@ -95,19 +103,17 @@ public class CustomerManager : Singleton<CustomerManager>
 
     public void UpdateCustomerLine()
     {
-        foreach(Customer customer in customers)
+        foreach (Customer customer in customers)
         {
             customer.SetTargetPoint(GetTargetPos(customer));
             customer.agent.SetDestination(GetTargetPos(customer));
         }
     }
 
-    // 현재 상호작용 중인 손님 (맨 첫번째 줄의 손님)
-    public void SetNowCustomer(Customer customer)
+    // 현재 상호작용 중인 손님 주문 설정 (맨 첫번째 줄의 손님)
+    public void SetNowOrder(Stack<IceCreamTasteType> order)
     {
-        nowCustomer = customer;
-
-        // UI 업데이트, 활성화
+        NowOrder.Value = order;
     }
 
     public Vector3 GetFirstPos()

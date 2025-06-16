@@ -6,17 +6,22 @@ public class Customer : MonoBehaviour
 {
     CustomerManager cm;
 
-    Stack<IceCreamTasteType> orderStack;
+    public Stack<IceCreamTasteType> orderStack;
     float timeLimit;
     float currentTime;
 
-    Vector3 leavePoint = new Vector3(8, 0, 8);
+    Vector3 leavePoint;
     Vector3 targetPoint;
     public NavMeshAgent agent;
     bool activateOrder = false;
 
     private void Start()
     {
+        // 임시 ///////////////////////
+        leavePoint = new Vector3(8, 0, 8);
+        ///////////////////////////////
+
+
         cm = CustomerManager.Instance;
 
         // 생성 시, 아이스크림 판매 대로 이동
@@ -35,9 +40,7 @@ public class Customer : MonoBehaviour
                 && agent.destination.z == cm.GetFirstPos().z
                 && !activateOrder)
             {
-                Debug.LogError("손님 왔음");
-                activateOrder = true;
-                cm.SetNowCustomer(this);
+                ArriveFirst();
             }
         }
 
@@ -52,7 +55,7 @@ public class Customer : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
-            if (this == cm.nowCustomer)
+            if (orderStack == cm.NowOrder.Value)
             Leave();
         }
 
@@ -81,6 +84,12 @@ public class Customer : MonoBehaviour
             && (!agent.hasPath || agent.velocity.sqrMagnitude == 0f); // 멈췄다
     }
 
+    public void ArriveFirst()
+    {
+        activateOrder = true;
+        cm.SetNowOrder(orderStack);
+        UIManager.Instance.ActivateOrderPanel();
+    }
 
     // 첫번째 손님 나가기
     // 만족 or 불만족 체크
@@ -88,6 +97,7 @@ public class Customer : MonoBehaviour
     {
         agent.SetDestination(leavePoint);
         cm.RemoveFirstCustomer();
+        UIManager.Instance.DeactivateOrderPanel();
     }
 
 
