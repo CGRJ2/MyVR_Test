@@ -18,6 +18,16 @@ public class GameManager : Singleton<GameManager>
         InitalizeOrderSetting();
     }
 
+    private void DayStart()
+    {
+
+    }
+
+    private void DayOff()
+    {
+
+    }
+
     // 게임매니저 제외한 싱글톤 객체들 초기화 순서 세팅
     private void InitalizeOrderSetting()
     {

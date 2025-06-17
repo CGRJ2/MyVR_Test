@@ -24,14 +24,12 @@ public class Customer : MonoBehaviour
     public ObservableProperty<Vector3> TargetPoint = new();
 
     public NavMeshAgent agent;
+
+    [SerializeField] CustomerState state;
     bool activateOrder = false;
 
     private void Start()
     {
-        // 임시 ///////////////////////
-        leavePoint = new Vector3(8, 0, 8);
-        ///////////////////////////////
-
         cm = CustomerManager.Instance;
 
         // 생성 시, 아이스크림 판매 대로 이동
@@ -60,15 +58,24 @@ public class Customer : MonoBehaviour
 
     private void Update()
     {
-        // 목적지에 도착한 상태
+        // 목적지에 도착
         if (ReachedDestination(agent))
         {
-            // 목적지가 첫번째 줄이라면 && 주문 시작 전 상태라면
-            if (agent.destination.x == cm.GetFirstPos().x
-                && agent.destination.z == cm.GetFirstPos().z
-                && !activateOrder)
+            // 접근 상태
+            if (state == CustomerState.Coming)
             {
-                ArriveFirst();
+                transform.rotation = Quaternion.LookRotation(Vector3.back);
+                // 목적지가 첫번째 줄이라면
+                if (agent.destination.x == cm.GetFirstPos().x && agent.destination.z == cm.GetFirstPos().z)
+                {
+                    ArriveFirst();
+                }
+            }
+            // 떠남 상태
+            else if (state == CustomerState.Going)
+            {
+                // 오브젝트풀에 다시 넣기 (임시로 일단 삭제함)
+                Destroy(gameObject);
             }
         }
 
@@ -83,6 +90,12 @@ public class Customer : MonoBehaviour
     public void SetOrder(Stack<IceCreamTasteType> order)
     {
         orderStack = order;
+    }
+
+    // 손님 생성 시, 주문 종료 후 이동할 목적지 저장
+    public void SetLeavePoint(Transform trans)
+    {
+        leavePoint = trans.position;
     }
 
     // navy mesh agent 타겟 설정 용도
@@ -102,7 +115,8 @@ public class Customer : MonoBehaviour
     // 첫번째 손님이 되었을 때 한 번만 호출
     public void ArriveFirst()
     {
-        activateOrder = true; // 한 번만 호출하기 위한 플래그
+        //activateOrder = true; // 한 번만 호출하기 위한 플래그
+        state = CustomerState.Waiting;
         cm.SetNowOrder(orderStack);
         UIManager.Instance.ActivateOrderPanel();
         timerCorountine = StartCoroutine(TimerCoroutine());
@@ -136,6 +150,7 @@ public class Customer : MonoBehaviour
     public void Leave()
     {
         agent.SetDestination(leavePoint);
+        state = CustomerState.Going;
         cm.RemoveFirstCustomer();
         UIManager.Instance.DeactivateOrderPanel();
     }

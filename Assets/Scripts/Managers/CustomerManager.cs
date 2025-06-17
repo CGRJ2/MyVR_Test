@@ -2,6 +2,7 @@ using DesignPattern;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CustomerManager : Singleton<CustomerManager>
@@ -11,7 +12,8 @@ public class CustomerManager : Singleton<CustomerManager>
     PlayerManager pm;
     [SerializeField] GameObject customerPrefab;
     [SerializeField] Transform defaultTarget;
-    [SerializeField] Transform npcSpawnPoint;
+    [SerializeField] Transform spawnPointBundle;
+    [SerializeField] Transform leavePointBundle;
     [SerializeField] int maxIceCreamStackCount;
     [SerializeField] int maxCustomerCount;
     [SerializeField] float lineDistance;
@@ -22,7 +24,8 @@ public class CustomerManager : Singleton<CustomerManager>
 
     Coroutine startSellingCoroutine;
 
-    
+    List<Transform> spawnPointList;
+    List<Transform> leavePointList;
 
     Queue<Customer> customers = new Queue<Customer>();
 
@@ -44,6 +47,11 @@ public class CustomerManager : Singleton<CustomerManager>
 
     private void Start()
     {
+        spawnPointList = spawnPointBundle.GetComponentsInChildren<Transform>().
+            Where(t => t != spawnPointBundle.transform).ToList();
+        leavePointList = leavePointBundle.GetComponentsInChildren<Transform>().
+            Where(t => t != leavePointBundle.transform).ToList();
+
         // 임시. 게임매니저에서 `장사 시작` 할 때 호출
         SpawnCustomer(); // 시작하자마자 한명 일단 불러
         startSellingCoroutine = StartCoroutine(SpawnRoutine());
@@ -89,17 +97,29 @@ public class CustomerManager : Singleton<CustomerManager>
     // 가게로 오는 손님 생성
     public void SpawnCustomer()
     {
-        // 손님 프리펩 생성
-        Customer customer = Instantiate(customerPrefab, npcSpawnPoint.position, Quaternion.identity).GetComponent<Customer>(); // TODO: 스폰 위치 커스텀 하기
+        // 스폰 포인트 랜덤 선택
+        Transform spawnPoint = GetRandomTranformByList(spawnPointList);
 
-        // 아이스크림 메뉴 설정
-        customer.SetOrder(RandomOrderStackGenerate());
+        // 손님 프리펩 생성
+        Customer customer = Instantiate(customerPrefab, spawnPoint.position, Quaternion.identity).GetComponent<Customer>(); 
 
         // 손님 큐에 추가
         customers.Enqueue(customer);
 
+        // 아이스크림 메뉴 설정
+        customer.SetOrder(RandomOrderStackGenerate());
+
         // 큐 순서에 맞춰 줄 서는 위치 설정
         customer.SetTargetPoint(GetTargetPos(customer));
+
+        // 나갈 곳 위치 저장
+        customer.SetLeavePoint(GetRandomTranformByList(leavePointList));
+    }
+
+    public Transform GetRandomTranformByList(List<Transform> tranformList)
+    {
+        int r = UnityEngine.Random.Range(0, tranformList.Count);
+        return tranformList[r];
     }
 
     // 현재 손님 접대 종료
@@ -127,15 +147,6 @@ public class CustomerManager : Singleton<CustomerManager>
             int randomTaste = UnityEngine.Random.Range(0, tasteCount);
             orderStack.Push((IceCreamTasteType)randomTaste);
         }
-
-        // 디버깅 용
-        /*Debug.Log($"맛 개수 : {tasteCount}");
-        Debug.Log(orderStack.Count);
-        IceCreamTasteType[] a = orderStack.ToArray();
-        foreach (IceCreamTasteType aa in a)
-        {
-            Debug.Log(aa);
-        }*/
 
         return orderStack;
     }
@@ -175,4 +186,9 @@ public class CustomerManager : Singleton<CustomerManager>
             customer.SetTargetPoint(GetTargetPos(customer));
         }
     }
+}
+
+public enum CustomerState
+{
+    Coming, Waiting, Going
 }
