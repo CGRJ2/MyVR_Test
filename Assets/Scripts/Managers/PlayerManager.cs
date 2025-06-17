@@ -13,16 +13,20 @@ public class PlayerManager : Singleton<PlayerManager>
         base.SingletonInit();
     }
 
-    public void GetMoney(int money)
+    public void UpdateMoney(int money)
     {
         this.money += money;
         UIManager.Instance.UpdateUpperUI(this.fame.ToString() , this.money.ToString());
     }
 
-    public void GetFame(int fame)
+    public void UpdateFame(int fame)
     {
         this.fame += fame;
         UIManager.Instance.UpdateUpperUI(this.fame.ToString(), this.money.ToString());
     }
 
+    public int GetFame()
+    {
+        return fame;
+    }
 }

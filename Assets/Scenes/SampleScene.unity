@@ -550,12 +550,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78ee406a113b2a949b4a3fa567dbd523, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxIceCreamLayer: 4
-  maxCustomerCounts: 4
-  lineDistance: 1
   customerPrefab: {fileID: 1133088675429454156, guid: 0bc33dec13d6e094284e1f67d9ce940d, type: 3}
   defaultTarget: {fileID: 4857696031733049456}
   npcSpawnPoint: {fileID: 1347944471}
+  maxIceCreamStackCount: 4
+  maxCustomerCount: 5
+  lineDistance: 1
+  baseMinDelay: 6
+  baseMaxDelay: 12
+  minCap: 2
+  maxCap: 4
 --- !u!1 &401499427
 GameObject:
   m_ObjectHideFlags: 0

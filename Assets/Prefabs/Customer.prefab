@@ -50,6 +50,7 @@ MonoBehaviour:
   singleIcePrice: 30
   maxTimer: 30
   minTimer: 20
+  leaveDelay: 1
   TargetPoint:
     _value: {x: 0, y: 0, z: 0}
   agent: {fileID: 0}

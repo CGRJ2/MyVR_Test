@@ -12,6 +12,7 @@ public class Customer : MonoBehaviour
     [SerializeField] int singleIcePrice;
     [SerializeField] float maxTimer;
     [SerializeField] float minTimer;
+    [SerializeField] float leaveDelay;
     Coroutine timerCorountine;
 
     CustomerManager cm;
@@ -45,7 +46,9 @@ public class Customer : MonoBehaviour
     private void OnDisable()
     {
         TargetPoint.UnsbscribeAll();
-        StopCoroutine(timerCorountine);
+        
+        if (timerCorountine != null)
+            StopCoroutine(timerCorountine);
     }
 
     // 타겟이 업데이트 되면 자동으로 이동 시작 (TargetPoint와 이벤트 연결)
@@ -124,7 +127,7 @@ public class Customer : MonoBehaviour
 
         // 타임 아웃 분노 <<<
         UIManager.Instance.SetTimerUI("Where is my ice cream?");
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(leaveDelay);
         TimeOut();
     }
 
@@ -137,6 +140,7 @@ public class Customer : MonoBehaviour
         UIManager.Instance.DeactivateOrderPanel();
     }
 
+
     public void ReceiveIceCream(SelectEnterEventArgs args)
     {
         Corn corn = args.interactableObject.transform.GetComponent<Corn>();
@@ -145,10 +149,13 @@ public class Customer : MonoBehaviour
         if (corn.GetTasteStackData().SequenceEqual(orderStack))
         {
             // 명성과 돈 지급
-            pm.GetMoney(corn.GetPrice(singleIcePrice));
-            pm.GetFame(5);
+            pm.UpdateMoney(corn.GetPrice(singleIcePrice));
+            pm.UpdateFame(5);
 
             // 만족하는 애니메이션 실행
+            if (timerCorountine != null)
+                StopCoroutine(timerCorountine);
+            UIManager.Instance.SetTimerUI("Thank you!");
         }
         else
         {
@@ -168,22 +175,25 @@ public class Customer : MonoBehaviour
             }
 
             // 돈 절반만 지급, 명성 감소
-            pm.GetMoney(corn.GetPrice(singleIcePrice)/2);
-            pm.GetFame(-wrongIceCount);
+            pm.UpdateMoney(corn.GetPrice(singleIcePrice)/2);
+            pm.UpdateFame(-wrongIceCount);
 
 
             // 불만족하는 애니메이션 실행
+            if (timerCorountine != null)
+                StopCoroutine(timerCorountine);
+            UIManager.Instance.SetTimerUI("Umm...");
         }
 
         // 애니메이션 종료 후
-        Leave();
+        Invoke(nameof(Leave), leaveDelay);
     }
 
 
     public void TimeOut()
     {
         PlayerManager pm = PlayerManager.Instance;
-        pm.GetFame(-5);
+        pm.UpdateFame(-5);
         Leave();
     }
 
