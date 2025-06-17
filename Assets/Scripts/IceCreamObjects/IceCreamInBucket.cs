@@ -5,7 +5,7 @@ using UnityEngine;
 public class IceCreamInBucket : MonoBehaviour
 {
     [SerializeField] IceCreamTasteType taste;
-    int remainingAmount = 10;
+    //int remainingAmount = 10;
 
    
 

@@ -7,6 +7,7 @@ public class GameManager : Singleton<GameManager>
 {
     [SerializeField] CustomerManager customerManager;
     [SerializeField] UIManager uiManager;
+    [SerializeField] PlayerManager playerManager;
 
     // 게임 상태 : 장사 대기 > 장사 시작 > 장사 종료 > 정산 > 장사 대기 ... ////// +일시정지
     private void Awake() => Init();
@@ -21,6 +22,7 @@ public class GameManager : Singleton<GameManager>
     private void InitalizeOrderSetting()
     {
         // 초기화할 순서대로 나열
+        playerManager.Init();
         customerManager.Init();
         uiManager.Init();
     }

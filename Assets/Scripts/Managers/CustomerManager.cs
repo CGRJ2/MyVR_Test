@@ -5,12 +5,18 @@ using UnityEngine;
 
 public class CustomerManager : Singleton<CustomerManager>
 {
+    // 손님 랜덤 스폰 루틴
+
+    PlayerManager pm;
+
     [SerializeField] int maxIceCreamLayer;
     [SerializeField] int maxCustomerCounts;
     [SerializeField] float lineDistance;
     [SerializeField] GameObject customerPrefab;
     [SerializeField] Transform defaultTarget;
     [SerializeField] Transform npcSpawnPoint;
+    
+
     Queue<Customer> customers = new Queue<Customer>();
 
     public ObservableProperty<Stack<IceCreamTasteType>> NowOrder { get; private set; } = new();
@@ -18,6 +24,7 @@ public class CustomerManager : Singleton<CustomerManager>
     public void Init()
     {
         base.SingletonInit();
+        pm = PlayerManager.Instance;
     }
 
     private void OnDestroy()
@@ -27,6 +34,7 @@ public class CustomerManager : Singleton<CustomerManager>
 
     public void Update()
     {
+        // 테스트 용
         if (Input.GetKeyDown(KeyCode.Q))
         {
             if (customers.Count < maxCustomerCounts)
@@ -36,6 +44,9 @@ public class CustomerManager : Singleton<CustomerManager>
         }
     }
 
+    
+
+    // 가게로 오는 손님 생성
     public void SpawnCustomer()
     {
         // 손님 프리펩 생성
@@ -51,6 +62,7 @@ public class CustomerManager : Singleton<CustomerManager>
         customer.SetTargetPoint(GetTargetPos(customer));
     }
 
+    // 현재 손님 접대 종료
     public void RemoveFirstCustomer()
     {
         // 현재 손님 값 초기화
@@ -63,6 +75,7 @@ public class CustomerManager : Singleton<CustomerManager>
         UpdateCustomerLine();
     }
 
+    // 랜덤 아이스크림 오더 생성기 (랜덤 조합기)
     public Stack<IceCreamTasteType> RandomOrderStackGenerate()
     {
         int tasteCount = Enum.GetValues(typeof(IceCreamTasteType)).Length;
@@ -87,6 +100,19 @@ public class CustomerManager : Singleton<CustomerManager>
         return orderStack;
     }
 
+    // 현재 상호작용 중인 손님의 주문 저장 (맨 첫번째 줄의 손님, UI반영 용도)
+    public void SetNowOrder(Stack<IceCreamTasteType> order)
+    {
+        NowOrder.Value = order;
+    }
+
+    // 첫번째 손님이 갈 위치를 반환하는 함수. 줄의 시작점
+    public Vector3 GetFirstPos()
+    {
+        return defaultTarget.position;
+    }
+
+    // customer가 본인의 큐 index에 맞는 줄 순서의 위치 반환하기
     public Vector3 GetTargetPos(Customer customer)
     {
         int index = Array.IndexOf(customers.ToArray(), customer);
@@ -101,23 +127,12 @@ public class CustomerManager : Singleton<CustomerManager>
         }
     }
 
+    // 현재 Customer Queue에 맞춰 모든 Customer의 TargetPoint 업데이트
     public void UpdateCustomerLine()
     {
         foreach (Customer customer in customers)
         {
             customer.SetTargetPoint(GetTargetPos(customer));
-            customer.agent.SetDestination(GetTargetPos(customer));
         }
-    }
-
-    // 현재 상호작용 중인 손님 주문 설정 (맨 첫번째 줄의 손님)
-    public void SetNowOrder(Stack<IceCreamTasteType> order)
-    {
-        NowOrder.Value = order;
-    }
-
-    public Vector3 GetFirstPos()
-    {
-        return defaultTarget.position;
     }
 }

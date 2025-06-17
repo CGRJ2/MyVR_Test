@@ -28,11 +28,13 @@ public class Corn : MonoBehaviour, IStackable
         }
     }
 
-    public void Sell(Stack<IceCreamTasteType> OrderedStack)
+    public int GetPrice(int singlePrice)
     {
-        if (tasteStackData.SequenceEqual(OrderedStack))
-        {
-            Debug.Log("주문과 일치함.");
-        }
+        return iceCreamStack.Count * singlePrice;
+    }
+
+    public Stack<IceCreamTasteType> GetTasteStackData()
+    {
+        return tasteStackData;
     }
 }

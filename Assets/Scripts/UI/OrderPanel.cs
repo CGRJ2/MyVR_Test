@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,9 +13,17 @@ public class OrderPanel : MonoBehaviour
     Color chocolate = Color.HSVToRGB(32f / 360f, 1f, 0.65f);
     Color vanilla = Color.HSVToRGB(51f / 360f, 0.57f, 1f);
 
-    private void Start()
+    
+
+    public void Init()
     {
         CustomerManager.Instance.NowOrder.Subscribe(SetImagesByOrder);
+
+        foreach (Image image in iceCreamImages)
+        {
+            image.gameObject.SetActive(false);
+        }
+        gameObject.SetActive(false);
     }
 
     public void SetImagesByOrder(Stack<IceCreamTasteType> orderStack)
@@ -29,6 +39,7 @@ public class OrderPanel : MonoBehaviour
         else
         {
             IceCreamTasteType[] order = orderStack.ToArray();
+            Array.Reverse(order);
 
             for (int i = 0; i < order.Length; i++)
             {
